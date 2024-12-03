@@ -216,11 +216,12 @@ def main():
                 return
             
             for j, beam in enumerate(multibeam):
-                if beam is not None:
+                if beam is not None and bomb is not None:
                     if beam.rct.colliderect(bomb.rct):  # ビームが爆弾を撃ち落としたら
                         explosion.append(Explosion(bomb.rct))
                         multibeam[j] = None
                         bombs[i] = None
+                        bomb = None
                         # bird.change_img(6, screen)
                         score.score += 1
                         pg.display.update()
