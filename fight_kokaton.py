@@ -146,8 +146,7 @@ def main():
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((300, 200))
     bomb = Bomb((255, 0, 0), 10)
-    beam = None  # Beam(bird)  # ビームインスタンス生成
-    # bomb2 = Bomb((0, 0, 255), 20)    
+    beam = None  # Beam(bird)  # ビームインスタンス生成   
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -171,7 +170,9 @@ def main():
             if beam.rct.colliderect(bomb.rct):  # ビームが爆弾を撃ち落としたら
                 beam = None
                 bomb = None
-
+                bird.change_img(6, screen)
+                pg.display.update()
+            
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         # beam.update(screen)
