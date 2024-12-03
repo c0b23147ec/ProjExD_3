@@ -142,6 +142,9 @@ class Bomb:
 
 
 class Score:
+    """
+    スコアの表示を行うクラス
+    """
     def __init__(self) -> None:
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
         self.color = (0, 0, 255)
@@ -155,6 +158,18 @@ class Score:
         screen.blit(self.txt, self.rct)
 
 
+class Explosion:
+    def __init__(self, xy: tuple[int, int]) -> None:
+        self.explosion_imgs = [pg.image.load("fig/explosion.gif"), 
+                               pg.transform.flip(pg.image.load("fig/explosion.gif"), True, True)]
+        self.center = xy
+        self.life = 10  # 爆弾の寿命
+
+    def update(self, screen: pg.Surface):
+        screen.blit(self.explosion_imgs[self.life % 2], self.center)
+        self.life -= 1
+
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -165,8 +180,10 @@ def main():
     multibeam = []
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]  
     score = Score()
+    explosion = []
     clock = pg.time.Clock()
     tmr = 0
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -176,7 +193,7 @@ def main():
                 multibeam.append(Beam(bird))            
         screen.blit(bg_img, [0, 0])
         
-        for bomb in bombs:
+        for i, bomb in enumerate(bombs):
             if bird.rct.colliderect(bomb.rct):
                 # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
                 bird.change_img(8, screen)
@@ -186,17 +203,16 @@ def main():
                 pg.display.update()
                 time.sleep(1)
                 return
-
-        for i, bomb in enumerate(bombs):
+            
             for j, beam in enumerate(multibeam):
                 if beam is not None:
                     if beam.rct.colliderect(bomb.rct):  # ビームが爆弾を撃ち落としたら
+                        explosion.append(Explosion(bomb.rct))
                         multibeam[j] = None
                         bombs[i] = None
                         # bird.change_img(6, screen)
                         score.score += 1
                         pg.display.update()
-
             
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
@@ -208,7 +224,11 @@ def main():
         multibeam = [beam for beam in multibeam if beam is not None]
         for beam in multibeam:
             beam.update(screen)
-        # bomb2.update(screen)
+
+        explosion = [detonation for detonation in explosion if detonation.life > 0]
+        for detonation in explosion:
+            detonation.update(screen)
+
         score.update(screen)
         pg.display.update()
         tmr += 1
