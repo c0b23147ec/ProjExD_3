@@ -162,6 +162,10 @@ class Score:
         self.rct.center = (100, HEIGHT - 50)
 
     def update(self, screen: pg.Surface):
+        """
+        self.scoreを表示する
+        引数：screen（画面Surface)
+        """
         self.txt = self.fonto.render(f"スコア:{self.score}", True, self.color)
         screen.blit(self.txt, self.rct)
 
@@ -177,6 +181,10 @@ class Explosion:
         self.life = 10  # 爆弾の寿命
 
     def update(self, screen: pg.Surface):
+        """
+        self.centerの位置に爆発エフェクトを表示する
+        引数：screen（画面Surface)
+        """
         screen.blit(self.explosion_imgs[self.life % 2], self.center)
         self.life -= 1
 
